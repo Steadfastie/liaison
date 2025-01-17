@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package liaison.proto;
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/any.proto";
+
+message Response {
+  string order_id = 1;
+  Status status = 2;
+  string message = 3;
+  optional google.protobuf.Any details = 4;
+  google.protobuf.Timestamp received_at = 5;
+  oneof test_oneof {
+    google.protobuf.Timestamp processed_at = 6;
+    google.protobuf.Duration duration = 7;
+  }
+  repeated State states_history = 8;
+}
+
+message State {
+  Status status = 1;
+  google.protobuf.Timestamp timestamp = 2;
+}
+
+enum Status {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_RECEIVED = 1;
+  STATUS_PROCESSING = 2;
+  STATUS_VALID = 3;
+  STATUS_INVALID = 4;
+}
