@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package liaison.proto;
+
+service OrderService {
+  rpc CreateOrder(Request) returns (Response);
+}

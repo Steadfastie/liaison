@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package liaison.proto;
+import "google.protobuf.Timestamp";
+
+message Request {
+  string order_id = 1;
+  string created_by = 2;
+  google.protobuf.Timestamp created_at = 3;
+  map<string, OrderItem> items = 4;
+}
+
+message OrderItem {
+  string code = 1;
+  int32 quantity = 2;
+  double price = 3;
+}
