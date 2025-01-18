@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package liaison.proto;
 
+import "order_request.proto";
+import "order_response.proto";
+
 service OrderService {
   rpc CreateOrder(Request) returns (Response);
 }
