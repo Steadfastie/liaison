@@ -9,9 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Protobuf Include=".\protos\order_request.proto" GrpcServices="Server" />
-	<Protobuf Include=".\protos\order_response.proto" GrpcServices="Server" />
-	<Protobuf Include=".\protos\order_service.proto" GrpcServices="Server" />
+	<Protobuf Include="..\..\proto\order_request.proto" GrpcServices="Server" />
+	<Protobuf Include="..\..\proto\order_response.proto" />
+	<Protobuf Include="..\..\proto\order_service.proto" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,7 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\application\application.csproj" />
+    <ProjectReference Include="..\infrastructure\infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

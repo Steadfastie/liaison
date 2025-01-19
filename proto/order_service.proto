@@ -1,6 +1,9 @@
 syntax = "proto3";
 
-package liaison.proto;
+package liaison.v1; // https://learn.microsoft.com/en-gb/aspnet/core/grpc/versioning?view=aspnetcore-9.0
+
+import "order_request.proto";
+import "order_response.proto";
 
 service OrderService {
   rpc CreateOrder(Request) returns (Response);
