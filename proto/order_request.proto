@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 package liaison.v1;
-import "google/protobuf/timestamp.proto";
 
 message Request {
   string order_id = 1;
