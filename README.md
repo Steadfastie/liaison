@@ -3,4 +3,7 @@
 
 Go client generate command:
 
-     protoc --proto_path=./proto --go_out=./go --go_opt=Morder_service.proto=/client --go_opt=Morder_request.proto=/client --go_opt=Morder_response.proto=/client ./proto/order_service.proto ./proto/order_request.proto ./proto/order_response.proto
+          protoc --proto_path=./proto --go_out=./go/client --go_opt=paths=source_relative \
+          --go-grpc_out=./go/client --go-grpc_opt=paths=source_relative \
+          --experimental_allow_proto3_optional \
+          ./proto/order_service.proto ./proto/order_request.proto ./proto/order_response.proto
