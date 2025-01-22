@@ -10,8 +10,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  build_and_test:
+    name: Build & Unit Test
     runs-on: ubuntu-latest
 
     steps:
@@ -19,10 +19,10 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore dotnet/service/service.sln
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build dotnet/service/service.sln --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test dotnet/service/service.sln --no-build --verbosity normal
