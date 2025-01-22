@@ -10,8 +10,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  build_and_test:
+    name: Build & Unit Test
     runs-on: ubuntu-latest
 
     steps:
