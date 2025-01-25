@@ -1,10 +1,11 @@
-﻿using OneOf;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using OneOf;
 
 namespace infrastructure.Domain;
-public class Order
+public class Order : Entity
 {
-    public Guid Id { get; set; }
-    public string CreatedBy { get; set; } = string.Empty;
+    [BsonRepresentation(BsonType.String)]
     public OrderStatus Status { get; set; }
     public DateTime ReceivedAt { get; set; }
     public OneOf<TimeSpan, DateTime> ProcessTime { get; set; }

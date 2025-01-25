@@ -5,9 +5,8 @@ option go_package = "github.com/steadfastie/liaison/go/client;client_v1";
 package liaison.v1;
 
 message Request {
-  string order_id = 1;
-  string created_by = 2;
-  map<string, OrderItem> items = 3;
+  string created_by = 1;
+  map<string, OrderItem> items = 2;
 }
 
 message OrderItem {

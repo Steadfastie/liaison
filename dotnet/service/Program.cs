@@ -1,29 +1,51 @@
 using application.Handlers;
 using infrastructure;
-using infrastructure.Repos;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Serilog;
+using Serilog.Formatting.Compact;
 using service.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .WriteTo.Console(new RenderedCompactJsonFormatter())
+    .CreateLogger();
 
-// Add services to the container.
-builder.Services.AddGrpc();
-
-builder.Services.AddSingleton<IOrderRepo, OrderRepo>();
-
-builder.Services.AddMediatR(cfg =>
+try
 {
-    cfg.RegisterServicesFromAssembly(typeof(CreateOrderHandler).Assembly);
-});
+    Log.Information("Starting up");
 
-builder.Services.AddGrpcHealthChecks()
-       .AddCheck(string.Empty, () => HealthCheckResult.Healthy());
+    var builder = WebApplication.CreateBuilder(args);
 
-var app = builder.Build();
+    builder.Services.AddSerilog();
+    builder.Services.AddGrpc();
 
-// Configure the HTTP request pipeline.
-app.MapGrpcService<OrderService>();
-app.MapGrpcHealthChecksService();
-app.MapGet("/", () => "Order service");
+    var mongoSettings = builder.Configuration.GetSection(nameof(MongoSettings)).Get<MongoSettings>()!;
+    builder.Services.AddPersistence(mongoSettings);
 
-app.Run();
+    builder.Services.AddMediatR(cfg =>
+    {
+        cfg.RegisterServicesFromAssembly(typeof(CreateOrderHandler).Assembly);
+    });
+
+    builder.Services.AddGrpcHealthChecks()
+           .AddCheck(string.Empty, () => HealthCheckResult.Healthy());
+
+    var app = builder.Build();
+
+    // Configure the HTTP request pipeline.
+    app.MapGrpcService<OrderService>();
+    app.MapGrpcHealthChecksService();
+    app.MapGet("/", () => "Order service");
+
+    app.Run();
+
+    Log.Information("Stopped cleanly");
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

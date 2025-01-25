@@ -10,7 +10,7 @@ namespace service.Services;
 public class OrderService : Liaison.V1.OrderService.OrderServiceBase
 {
     private readonly IMediator _mediator;
-    public OrderService(IMediator mediator)
+    public OrderService(IMediator mediator, ILogger<OrderService> logger)
     {
         _mediator = mediator;
     }
@@ -19,7 +19,6 @@ public class OrderService : Liaison.V1.OrderService.OrderServiceBase
     {
         var result = await _mediator.Send(new CreateOrderRequest()
         {
-            OrderId = request.OrderId,
             CreatedBy = request.CreatedBy,
             Items = request.Items.Select(i => new infrastructure.Domain.OrderItem()
             {
