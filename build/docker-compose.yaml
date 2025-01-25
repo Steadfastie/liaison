@@ -1,0 +1,31 @@
+services:
+  dotnet:
+    build:
+      context: ../
+      dockerfile: ./build/dotnet.dockerfile
+    image: dotnet-image
+    container_name: dotnet
+    healthcheck:
+      test: ["CMD", "bin/grpc_health_probe-linux-amd64", "-addr=localhost:5002"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    ports:
+      - "5002:8080"
+    environment:
+      - MongoSettings__ConnectionString=mongodb://mongo:27017/
+      - MongoSettings__Database=liaison-dc
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-local:/data/db
+
+volumes:
+  mongo-local:
+    name: mongo-local

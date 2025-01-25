@@ -10,3 +10,7 @@ Go client generate command (WSL-compatible):
      --go-grpc_out=./go/client --go-grpc_opt=paths=source_relative \
      --experimental_allow_proto3_optional \
      ./proto/order_service.proto ./proto/order_request.proto ./proto/order_response.proto
+
+Docker build dotnet
+
+     docker build -f dotnet.dockerfile ../

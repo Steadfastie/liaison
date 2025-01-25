@@ -1,38 +1,16 @@
 ﻿using infrastructure.Domain;
+using MongoDB.Driver;
 
 namespace infrastructure.Repos;
 
-public class OrderRepo : IOrderRepo
+internal class OrderRepo : Repo<Order>, IOrderRepo
 {
-    public Task<Order> Create(string orderId, string createdBy, List<OrderItem> items)
+    public OrderRepo(IMongoDatabase db) : base(db)
     {
-        var now = DateTime.UtcNow;
-        var order = new Order
-        {
-            Id = Guid.TryParse(orderId, out var id) ? id : Guid.NewGuid(),
-            Status = OrderStatus.Valid,
-            ReceivedAt = now,
-            ProcessTime = TimeSpan.FromMilliseconds(30),
-            StatesHistory =
-            [
-                new() {
-                    Timestamp = now,
-                    Status = OrderStatus.Received
-                },
-                new() {
-                    Timestamp = now.AddMilliseconds(10),
-                    Status = OrderStatus.Processing
-                },
-                new() {
-                    Timestamp = now.AddMilliseconds(20),
-                    Status = OrderStatus.Valid
-                },
-            ],
-            CreatedBy = createdBy
-        };
-        var statusHistory = order.StatesHistory.OrderBy(i => i.Timestamp);
-        order.ProcessTime = statusHistory.Last().Timestamp - statusHistory.First().Timestamp;
+    }
 
-        return Task.FromResult(order);
+    public async Task Create(Order order)
+    {
+        await Collection.InsertOneAsync(order);
     }
 }
