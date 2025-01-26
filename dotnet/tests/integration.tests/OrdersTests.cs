@@ -57,12 +57,20 @@ public class OrdersTests
         if (response.TestOneofCase is TestOneofOneofCase.ProcessedAt)
         {
             response.ProcessedAt.ToDateTime().ShouldBe(now, TimeSpan.FromSeconds(10));
+
+            dbDocument.Duration.ShouldBeNull();
+            dbDocument.ProcessedAt.ShouldNotBeNull();
+            dbDocument.ProcessedAt.Value.ShouldBe(now, TimeSpan.FromSeconds(10));
         }
         if (response.TestOneofCase is TestOneofOneofCase.Duration)
         {
             var timespan = TimeSpan.FromSeconds(response.Duration.Seconds)
                    + TimeSpan.FromTicks(response.Duration.Nanos / 100);
             timespan.ShouldBeLessThan(TimeSpan.FromMilliseconds(100));
+
+            dbDocument.Duration.ShouldNotBeNull();
+            dbDocument.Duration.ShouldBe(timespan);
+            dbDocument.ProcessedAt.ShouldBeNull();
         }
 
         dbDocument.CreatedBy.ShouldBe(createdBy);
