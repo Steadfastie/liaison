@@ -25,4 +25,23 @@ jobs:
     - name: Build
       run: dotnet build dotnet/service/service.sln --no-restore
     - name: Test
-      run: dotnet test dotnet/service/service.sln --no-build --verbosity normal
+      run: dotnet test dotnet/tests/unit.tests/unit.tests.csproj
+
+  integration_tests:
+    name: Run Integration Tests
+    runs-on: ubuntu-latest
+    needs: build_and_test
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+    - name: Build Docker Images and Start Services
+      run: docker compose -f ./build/docker-compose.yaml up -d --build
+    - name: Run Integration Tests
+      run: dotnet test dotnet/tests/integration.tests/integration.tests.csproj
+    - name: Tear Down Docker Containers
+      if: always()  
+      run: docker compose -f ./build/docker-compose.yaml down 
