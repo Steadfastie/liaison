@@ -14,10 +14,14 @@ public static class CreateOrderMapper
             Status = order.Status.MapFromDomain(),
             ReceivedAt = Timestamp.FromDateTime(order.ReceivedAt)
         };
-        order.ProcessTime.Switch(
-            (TimeSpan timeSpan) => response.Duration = Duration.FromTimeSpan(timeSpan),
-            (DateTime dateTime) => response.ProcessedAt = Timestamp.FromDateTime(dateTime)
-        );
+        if (order.Duration is not null)
+        {
+            response.Duration = Duration.FromTimeSpan(order.Duration.Value);
+        }
+        else if (order.ProcessedAt is not null)
+        {
+            response.ProcessedAt = Timestamp.FromDateTime(order.ProcessedAt.Value);
+        }
         response.StatesHistory.AddRange(order.StatesHistory.Select(i => new State()
         {
             Timestamp = Timestamp.FromDateTime(i.Timestamp),

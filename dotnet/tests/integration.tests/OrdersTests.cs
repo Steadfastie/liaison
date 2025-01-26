@@ -24,6 +24,7 @@ public class OrdersTests
         await _dbFixutre.Orders.ClearAll();
 
         var now = DateTime.UtcNow;
+        const string createdBy = "test";
         var request = new Request
         {
             Items = {
@@ -42,11 +43,12 @@ public class OrdersTests
                     }
                 }
             },
-            CreatedBy = "test"
+            CreatedBy = createdBy
         };
 
         // act
         var response = await _grpc.Client.CreateOrderAsync(request);
+        var dbDocument = await _dbFixutre.Orders.GetById(response.OrderId);
 
         // assert
         response.Status.ShouldBe(Status.Valid);
@@ -62,5 +64,8 @@ public class OrdersTests
                    + TimeSpan.FromTicks(response.Duration.Nanos / 100);
             timespan.ShouldBeLessThan(TimeSpan.FromMilliseconds(100));
         }
+
+        dbDocument.CreatedBy.ShouldBe(createdBy);
+        dbDocument.Status.ShouldBe(infrastructure.Domain.OrderStatus.Valid);
     }
 }
