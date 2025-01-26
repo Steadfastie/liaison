@@ -15,6 +15,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{824888B8
 		..\..\build\dotnet.dockerfile = ..\..\build\dotnet.dockerfile
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FF90412B-6235-4512-941C-CDDBDAE570F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "integration.tests", "..\tests\integration.tests\integration.tests.csproj", "{B5A4F649-5862-43E0-BDA1-C7BC84B802FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unit.tests", "..\tests\unit.tests\unit.tests.csproj", "{52CB6240-9EBF-4B6B-ADB4-07D70FE04B65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,8 +39,20 @@ Global
 		{75646BA0-F5C3-4CDC-BF40-F94D2DEB4307}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75646BA0-F5C3-4CDC-BF40-F94D2DEB4307}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75646BA0-F5C3-4CDC-BF40-F94D2DEB4307}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5A4F649-5862-43E0-BDA1-C7BC84B802FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5A4F649-5862-43E0-BDA1-C7BC84B802FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5A4F649-5862-43E0-BDA1-C7BC84B802FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5A4F649-5862-43E0-BDA1-C7BC84B802FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52CB6240-9EBF-4B6B-ADB4-07D70FE04B65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52CB6240-9EBF-4B6B-ADB4-07D70FE04B65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52CB6240-9EBF-4B6B-ADB4-07D70FE04B65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52CB6240-9EBF-4B6B-ADB4-07D70FE04B65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B5A4F649-5862-43E0-BDA1-C7BC84B802FF} = {FF90412B-6235-4512-941C-CDDBDAE570F6}
+		{52CB6240-9EBF-4B6B-ADB4-07D70FE04B65} = {FF90412B-6235-4512-941C-CDDBDAE570F6}
 	EndGlobalSection
 EndGlobal

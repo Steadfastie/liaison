@@ -19,7 +19,7 @@ public static class Extensions
         RegisterMappings();
     }
 
-    private static void RegisterMappings()
+    public static void RegisterMappings()
     {
         BsonSerializer.RegisterSerializer(new OneOfTimeSpanDateTimeSerializer());
 

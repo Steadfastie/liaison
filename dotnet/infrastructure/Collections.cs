@@ -1,7 +1,7 @@
 ﻿using infrastructure.Domain;
 
 namespace infrastructure;
-internal static class Collections
+public static class Collections
 {
     public static string GetCollectionName<T>() where T : Entity =>
         typeof(T) switch
