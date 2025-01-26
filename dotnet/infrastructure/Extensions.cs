@@ -1,7 +1,9 @@
 ﻿using infrastructure.Domain;
 using infrastructure.Repos;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
 namespace infrastructure;
@@ -21,8 +23,9 @@ public static class Extensions
 
     public static void RegisterMappings()
     {
-        BsonSerializer.RegisterSerializer(new OneOfTimeSpanDateTimeSerializer());
+        BsonSerializer.RegisterSerializer(new EnumSerializer<OrderStatus>(BsonType.String));
 
         BsonClassMap.RegisterClassMap<Order>();
+        BsonClassMap.RegisterClassMap<OrderState>();
     }
 }

@@ -13,6 +13,14 @@ public class OrdersFixture
         _collection = db.GetCollection<Order>(collectionName);
     }
 
+    public async Task<Order> GetById(string id)
+    {
+        var filter = Builders<Order>.Filter.Eq(d => d.Id, id);
+        var cursor = await _collection.FindAsync<Order>(filter);
+
+        return await cursor.FirstOrDefaultAsync();
+    }
+
     public async Task ClearAll()
     {
         var filter = Builders<Order>.Filter.Empty;

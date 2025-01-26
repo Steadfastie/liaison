@@ -24,6 +24,7 @@ public class OrdersTests
         await _dbFixutre.Orders.ClearAll();
 
         var now = DateTime.UtcNow;
+        const string createdBy = "test";
         var request = new Request
         {
             Items = {
@@ -42,11 +43,12 @@ public class OrdersTests
                     }
                 }
             },
-            CreatedBy = "test"
+            CreatedBy = createdBy
         };
 
         // act
         var response = await _grpc.Client.CreateOrderAsync(request);
+        var dbDocument = await _dbFixutre.Orders.GetById(response.OrderId);
 
         // assert
         response.Status.ShouldBe(Status.Valid);
@@ -55,12 +57,23 @@ public class OrdersTests
         if (response.TestOneofCase is TestOneofOneofCase.ProcessedAt)
         {
             response.ProcessedAt.ToDateTime().ShouldBe(now, TimeSpan.FromSeconds(10));
+
+            dbDocument.Duration.ShouldBeNull();
+            dbDocument.ProcessedAt.ShouldNotBeNull();
+            dbDocument.ProcessedAt.Value.ShouldBe(now, TimeSpan.FromSeconds(10));
         }
         if (response.TestOneofCase is TestOneofOneofCase.Duration)
         {
             var timespan = TimeSpan.FromSeconds(response.Duration.Seconds)
                    + TimeSpan.FromTicks(response.Duration.Nanos / 100);
             timespan.ShouldBeLessThan(TimeSpan.FromMilliseconds(100));
+
+            dbDocument.Duration.ShouldNotBeNull();
+            dbDocument.Duration.ShouldBe(timespan);
+            dbDocument.ProcessedAt.ShouldBeNull();
         }
+
+        dbDocument.CreatedBy.ShouldBe(createdBy);
+        dbDocument.Status.ShouldBe(infrastructure.Domain.OrderStatus.Valid);
     }
 }

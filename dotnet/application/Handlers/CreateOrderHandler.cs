@@ -24,20 +24,14 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderRequest, OneOf<Orde
 
     public async Task<OneOf<Order, No>> Handle(CreateOrderRequest request, CancellationToken cancellationToken)
     {
-        using (_logger.BeginScope(new Dictionary<string, object>
+        var now = DateTime.UtcNow;
+        var order = new Order
         {
-            ["user"] = request.CreatedBy,
-        }))
-        {
-            var now = DateTime.UtcNow;
-            var order = new Order
-            {
-                Status = OrderStatus.Valid,
-                ReceivedAt = now,
-                ProcessTime = TimeSpan.FromMilliseconds(30),
-                StatesHistory =
-                [
-                    new() {
+            Status = OrderStatus.Valid,
+            ReceivedAt = now,
+            StatesHistory =
+            [
+                new() {
                     Timestamp = now,
                     Status = OrderStatus.Received
                 },
@@ -50,14 +44,14 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderRequest, OneOf<Orde
                     Status = OrderStatus.Valid
                 },
             ],
-                CreatedBy = request.CreatedBy
-            };
-            var statusHistory = order.StatesHistory.OrderBy(i => i.Timestamp);
-            order.ProcessTime = statusHistory.Last().Timestamp - statusHistory.First().Timestamp;
-
-            await _orderRepo.Create(order);
-
-            return order;
+            CreatedBy = request.CreatedBy
         };
+        var statusHistory = order.StatesHistory.OrderBy(i => i.Timestamp);
+        order.Duration = statusHistory.Last().Timestamp - statusHistory.First().Timestamp;
+
+        _logger.LogInformation("Creating order with {Id} id", order.Id);
+        await _orderRepo.Create(order);
+
+        return order;
     }
 }
