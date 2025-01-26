@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<Protobuf Include="..\..\proto\order_request.proto" GrpcServices="Server" />
+	<Protobuf Include="..\..\proto\order_request.proto" />
 	<Protobuf Include="..\..\proto\order_response.proto" />
 	<Protobuf Include="..\..\proto\order_service.proto" />
   </ItemGroup>

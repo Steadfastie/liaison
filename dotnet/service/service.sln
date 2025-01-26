@@ -21,6 +21,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "integration.tests", "..\tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "unit.tests", "..\tests\unit.tests\unit.tests.csproj", "{52CB6240-9EBF-4B6B-ADB4-07D70FE04B65}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "proto", "proto", "{94E6CB3F-E188-4921-B1D9-A8B2CE955003}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\proto\order_request.proto = ..\..\proto\order_request.proto
+		..\..\proto\order_response.proto = ..\..\proto\order_response.proto
+		..\..\proto\order_service.proto = ..\..\proto\order_service.proto
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

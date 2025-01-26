@@ -2,13 +2,11 @@
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
-namespace integration.tests;
-
-[CollectionDefinition("integration")]
-public class DbFixture : ICollectionFixture<DbFixture>
+namespace integration.tests.DbFixture;
+public class DatabaseFixture
 {
-    internal readonly OrdersFixture Orders;
-    public DbFixture()
+    public readonly OrdersFixture Orders;
+    public DatabaseFixture()
     {
         var config = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
