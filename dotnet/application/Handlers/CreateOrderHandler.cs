@@ -1,5 +1,4 @@
-﻿using DnsClient.Internal;
-using infrastructure;
+﻿using infrastructure;
 using infrastructure.Domain;
 using MediatR;
 using Microsoft.Extensions.Logging;
