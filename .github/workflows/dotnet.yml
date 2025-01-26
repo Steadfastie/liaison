@@ -38,6 +38,8 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
+    - name: Check docker-compose
+      run: docker-compose --version
     - name: Build Docker Images and Start Services
       run: |
         cd build
