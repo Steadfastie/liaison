@@ -44,4 +44,4 @@ jobs:
       run: dotnet test dotnet/tests/integration.tests/integration.tests.csproj
     - name: Tear Down Docker Containers
       if: always()  
-      run: docker compose -f docker-compose.yaml down 
+      run: docker compose -f ./build/docker-compose.yaml down 
