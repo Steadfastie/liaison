@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "github.com/steadfastie/liaison/go/service;service_v1";
+
+import "google/protobuf/timestamp.proto";
+
+package liaison.v1;
+
+message Shipment {
+  string shipmentId = 1;
+  ShipmentStatus status = 2;
+  google.protobuf.Timestamp lastUpdated = 3;
+  string location = 4;
+}
+
+enum ShipmentStatus {
+  SHIPMENT_STATUS_UNSPECIFIED = 0;
+  SHIPMENT_STATUS_REGISTERED = 1;
+  SHIPMENT_STATUS_ONROUTE = 2;
+  SHIPMENT_STATUS_SHIPPED = 3;
+}

@@ -25,7 +25,6 @@ func main() {
 	client := client_go.NewOrderServiceClient(conn)
 
 	var req = &client_go.Request{
-		OrderId:   "38DE78BC-614D-44F2-BF2E-130F42224DD4",
 		CreatedBy: "John Doe",
 		Items: map[string]*client_go.OrderItem{
 			"1111": {
@@ -43,7 +42,7 @@ func main() {
 
 	var resp, orderErr = client.CreateOrder(context.Background(), req)
 	if orderErr != nil {
-		log.Printf("fail to create order: %v", err)
+		log.Printf("fail to create order: %v", orderErr)
 	}
 
 	log.Printf("got the response: %v", resp)
