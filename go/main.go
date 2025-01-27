@@ -1,49 +1,27 @@
 package main
 
 import (
-	"context"
 	"log"
+	"net"
 
-	client_go "liaison_go/client"
+	"liaison_go/handlers"
+
+	service_v1 "liaison_go/generated/service"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 var (
-	serverAddr = "localhost:5002"
+	serverAddr = "localhost:5001"
 )
 
 func main() {
-	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	conn, err := grpc.NewClient(serverAddr, opts...)
+	lis, err := net.Listen("tcp", serverAddr)
 	if err != nil {
-		log.Fatalf("fail to dial: %v", err)
+		log.Fatalf("failed to listen: %v", err)
 	}
-	defer conn.Close()
-	client := client_go.NewOrderServiceClient(conn)
-
-	var req = &client_go.Request{
-		CreatedBy: "John Doe",
-		Items: map[string]*client_go.OrderItem{
-			"1111": {
-				Code:     "1111",
-				Quantity: 1,
-				Price:    100.00,
-			},
-			"2222": {
-				Code:     "2222",
-				Quantity: 2,
-				Price:    120.00,
-			},
-		},
-	}
-
-	var resp, orderErr = client.CreateOrder(context.Background(), req)
-	if orderErr != nil {
-		log.Printf("fail to create order: %v", orderErr)
-	}
-
-	log.Printf("got the response: %v", resp)
+	var opts []grpc.ServerOption
+	grpcServer := grpc.NewServer(opts...)
+	service_v1.RegisterTrackingServiceServer(grpcServer, handlers.NewTrackingHandler())
+	grpcServer.Serve(lis)
 }

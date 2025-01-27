@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/steadfastie/liaison/go/service;service_v1";
+option go_package = "github.com/steadfastie/liaison/go/generated/service;service_v1";
 
 import "google/protobuf/timestamp.proto";
 
@@ -18,4 +18,5 @@ enum ShipmentStatus {
   SHIPMENT_STATUS_REGISTERED = 1;
   SHIPMENT_STATUS_ONROUTE = 2;
   SHIPMENT_STATUS_SHIPPED = 3;
+  SHIPMENT_STATUS_NOT_SHIPPED = 4;
 }

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/steadfastie/liaison/go/service;service_v1";
+option go_package = "github.com/steadfastie/liaison/go/generated/service;service_v1";
 
 import "google/protobuf/timestamp.proto";
 import "tracking_shipment.proto";

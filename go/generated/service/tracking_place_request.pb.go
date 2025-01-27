@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.25.0-devel
 // 	protoc        v3.14.0
-// source: tracking_list_response.proto
+// source: tracking_place_request.proto
 
 package service_v1
 
@@ -21,7 +21,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ListResponse struct {
+type PlaceRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -30,23 +30,23 @@ type ListResponse struct {
 	ValidUntill *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=validUntill,proto3" json:"validUntill,omitempty"`
 }
 
-func (x *ListResponse) Reset() {
-	*x = ListResponse{}
+func (x *PlaceRequest) Reset() {
+	*x = PlaceRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_tracking_list_response_proto_msgTypes[0]
+		mi := &file_tracking_place_request_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
 }
 
-func (x *ListResponse) String() string {
+func (x *PlaceRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListResponse) ProtoMessage() {}
+func (*PlaceRequest) ProtoMessage() {}
 
-func (x *ListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_tracking_list_response_proto_msgTypes[0]
+func (x *PlaceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_tracking_place_request_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,70 +57,71 @@ func (x *ListResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListResponse.ProtoReflect.Descriptor instead.
-func (*ListResponse) Descriptor() ([]byte, []int) {
-	return file_tracking_list_response_proto_rawDescGZIP(), []int{0}
+// Deprecated: Use PlaceRequest.ProtoReflect.Descriptor instead.
+func (*PlaceRequest) Descriptor() ([]byte, []int) {
+	return file_tracking_place_request_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ListResponse) GetShipments() []*Shipment {
+func (x *PlaceRequest) GetShipments() []*Shipment {
 	if x != nil {
 		return x.Shipments
 	}
 	return nil
 }
 
-func (x *ListResponse) GetValidUntill() *timestamppb.Timestamp {
+func (x *PlaceRequest) GetValidUntill() *timestamppb.Timestamp {
 	if x != nil {
 		return x.ValidUntill
 	}
 	return nil
 }
 
-var File_tracking_list_response_proto protoreflect.FileDescriptor
+var File_tracking_place_request_proto protoreflect.FileDescriptor
 
-var file_tracking_list_response_proto_rawDesc = []byte{
-	0x0a, 0x1c, 0x74, 0x72, 0x61, 0x63, 0x6b, 0x69, 0x6e, 0x67, 0x5f, 0x6c, 0x69, 0x73, 0x74, 0x5f,
-	0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0a,
+var file_tracking_place_request_proto_rawDesc = []byte{
+	0x0a, 0x1c, 0x74, 0x72, 0x61, 0x63, 0x6b, 0x69, 0x6e, 0x67, 0x5f, 0x70, 0x6c, 0x61, 0x63, 0x65,
+	0x5f, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0a,
 	0x6c, 0x69, 0x61, 0x69, 0x73, 0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67,
 	0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65,
 	0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x17, 0x74, 0x72, 0x61,
 	0x63, 0x6b, 0x69, 0x6e, 0x67, 0x5f, 0x73, 0x68, 0x69, 0x70, 0x6d, 0x65, 0x6e, 0x74, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x80, 0x01, 0x0a, 0x0c, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x32, 0x0a, 0x09, 0x73, 0x68, 0x69, 0x70, 0x6d, 0x65, 0x6e,
+	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x80, 0x01, 0x0a, 0x0c, 0x50, 0x6c, 0x61, 0x63, 0x65, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x32, 0x0a, 0x09, 0x73, 0x68, 0x69, 0x70, 0x6d, 0x65, 0x6e,
 	0x74, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x6c, 0x69, 0x61, 0x69, 0x73,
 	0x6f, 0x6e, 0x2e, 0x76, 0x31, 0x2e, 0x53, 0x68, 0x69, 0x70, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x09,
 	0x73, 0x68, 0x69, 0x70, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x12, 0x3c, 0x0a, 0x0b, 0x76, 0x61, 0x6c,
 	0x69, 0x64, 0x55, 0x6e, 0x74, 0x69, 0x6c, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a,
 	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
 	0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x0b, 0x76, 0x61, 0x6c, 0x69,
-	0x64, 0x55, 0x6e, 0x74, 0x69, 0x6c, 0x6c, 0x42, 0x36, 0x5a, 0x34, 0x67, 0x69, 0x74, 0x68, 0x75,
+	0x64, 0x55, 0x6e, 0x74, 0x69, 0x6c, 0x6c, 0x42, 0x40, 0x5a, 0x3e, 0x67, 0x69, 0x74, 0x68, 0x75,
 	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x73, 0x74, 0x65, 0x61, 0x64, 0x66, 0x61, 0x73, 0x74, 0x69,
-	0x65, 0x2f, 0x6c, 0x69, 0x61, 0x69, 0x73, 0x6f, 0x6e, 0x2f, 0x67, 0x6f, 0x2f, 0x73, 0x65, 0x72,
-	0x76, 0x69, 0x63, 0x65, 0x3b, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x76, 0x31, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x2f, 0x6c, 0x69, 0x61, 0x69, 0x73, 0x6f, 0x6e, 0x2f, 0x67, 0x6f, 0x2f, 0x67, 0x65, 0x6e,
+	0x65, 0x72, 0x61, 0x74, 0x65, 0x64, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x3b, 0x73,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
-	file_tracking_list_response_proto_rawDescOnce sync.Once
-	file_tracking_list_response_proto_rawDescData = file_tracking_list_response_proto_rawDesc
+	file_tracking_place_request_proto_rawDescOnce sync.Once
+	file_tracking_place_request_proto_rawDescData = file_tracking_place_request_proto_rawDesc
 )
 
-func file_tracking_list_response_proto_rawDescGZIP() []byte {
-	file_tracking_list_response_proto_rawDescOnce.Do(func() {
-		file_tracking_list_response_proto_rawDescData = protoimpl.X.CompressGZIP(file_tracking_list_response_proto_rawDescData)
+func file_tracking_place_request_proto_rawDescGZIP() []byte {
+	file_tracking_place_request_proto_rawDescOnce.Do(func() {
+		file_tracking_place_request_proto_rawDescData = protoimpl.X.CompressGZIP(file_tracking_place_request_proto_rawDescData)
 	})
-	return file_tracking_list_response_proto_rawDescData
+	return file_tracking_place_request_proto_rawDescData
 }
 
-var file_tracking_list_response_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
-var file_tracking_list_response_proto_goTypes = []interface{}{
-	(*ListResponse)(nil),          // 0: liaison.v1.ListResponse
+var file_tracking_place_request_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_tracking_place_request_proto_goTypes = []interface{}{
+	(*PlaceRequest)(nil),          // 0: liaison.v1.PlaceRequest
 	(*Shipment)(nil),              // 1: liaison.v1.Shipment
 	(*timestamppb.Timestamp)(nil), // 2: google.protobuf.Timestamp
 }
-var file_tracking_list_response_proto_depIdxs = []int32{
-	1, // 0: liaison.v1.ListResponse.shipments:type_name -> liaison.v1.Shipment
-	2, // 1: liaison.v1.ListResponse.validUntill:type_name -> google.protobuf.Timestamp
+var file_tracking_place_request_proto_depIdxs = []int32{
+	1, // 0: liaison.v1.PlaceRequest.shipments:type_name -> liaison.v1.Shipment
+	2, // 1: liaison.v1.PlaceRequest.validUntill:type_name -> google.protobuf.Timestamp
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
@@ -128,15 +129,15 @@ var file_tracking_list_response_proto_depIdxs = []int32{
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_tracking_list_response_proto_init() }
-func file_tracking_list_response_proto_init() {
-	if File_tracking_list_response_proto != nil {
+func init() { file_tracking_place_request_proto_init() }
+func file_tracking_place_request_proto_init() {
+	if File_tracking_place_request_proto != nil {
 		return
 	}
 	file_tracking_shipment_proto_init()
 	if !protoimpl.UnsafeEnabled {
-		file_tracking_list_response_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListResponse); i {
+		file_tracking_place_request_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PlaceRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -152,18 +153,18 @@ func file_tracking_list_response_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_tracking_list_response_proto_rawDesc,
+			RawDescriptor: file_tracking_place_request_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_tracking_list_response_proto_goTypes,
-		DependencyIndexes: file_tracking_list_response_proto_depIdxs,
-		MessageInfos:      file_tracking_list_response_proto_msgTypes,
+		GoTypes:           file_tracking_place_request_proto_goTypes,
+		DependencyIndexes: file_tracking_place_request_proto_depIdxs,
+		MessageInfos:      file_tracking_place_request_proto_msgTypes,
 	}.Build()
-	File_tracking_list_response_proto = out.File
-	file_tracking_list_response_proto_rawDesc = nil
-	file_tracking_list_response_proto_goTypes = nil
-	file_tracking_list_response_proto_depIdxs = nil
+	File_tracking_place_request_proto = out.File
+	file_tracking_place_request_proto_rawDesc = nil
+	file_tracking_place_request_proto_goTypes = nil
+	file_tracking_place_request_proto_depIdxs = nil
 }
