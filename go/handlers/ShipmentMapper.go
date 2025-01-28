@@ -25,3 +25,22 @@ func toProtoShipment(shipment *d.Shipment) *pb.Shipment {
 		Location:    shipment.Location,
 	}
 }
+
+// Map the protobuf Shipments to domain Shipments
+func ToDomainShipments(shipments []*pb.Shipment) []d.Shipment {
+	var dShipments []d.Shipment
+	for i := range shipments {
+		dShipment := toDomainShipment(shipments[i]) // can't do same as above because of a lock in generated struct
+		dShipments = append(dShipments, dShipment)
+	}
+	return dShipments
+}
+
+func toDomainShipment(shipment *pb.Shipment) d.Shipment {
+	return d.Shipment{
+		ShipmentId:  shipment.ShipmentId,
+		Status:      ToDomainShipmentStatus(&shipment.Status),
+		LastUpdated: shipment.LastUpdated.AsTime(),
+		Location:    shipment.Location,
+	}
+}
