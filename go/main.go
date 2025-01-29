@@ -3,48 +3,59 @@ package main
 import (
 	"context"
 	"log"
+	"net"
 
-	client_go "liaison_go/client"
+	"liaison_go/business"
+	"liaison_go/handlers"
+	"liaison_go/persistence"
 
+	service_v1 "liaison_go/generated/service"
+
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 var (
-	serverAddr = "localhost:5002"
+	serverAddr = "localhost:5001"
+	mongoAddr  = "mongodb://localhost:27017"
+	database   = "liaison"
 )
 
+const ()
+
 func main() {
-	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	conn, err := grpc.NewClient(serverAddr, opts...)
+
+	// MongoDB intialization
+	bsonOpts := &options.BSONOptions{
+		UseJSONStructTags: true,
+	}
+	clientOpts := options.Client().
+		ApplyURI(mongoAddr).
+		SetBSONOptions(bsonOpts)
+	client, err := mongo.Connect(clientOpts)
 	if err != nil {
-		log.Fatalf("fail to dial: %v", err)
+		panic(err)
 	}
-	defer conn.Close()
-	client := client_go.NewOrderServiceClient(conn)
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			panic(err)
+		}
+	}()
+	db := client.Database(database)
 
-	var req = &client_go.Request{
-		OrderId:   "38DE78BC-614D-44F2-BF2E-130F42224DD4",
-		CreatedBy: "John Doe",
-		Items: map[string]*client_go.OrderItem{
-			"1111": {
-				Code:     "1111",
-				Quantity: 1,
-				Price:    100.00,
-			},
-			"2222": {
-				Code:     "2222",
-				Quantity: 2,
-				Price:    120.00,
-			},
-		},
+	// Services intialization
+	shipmentStore := persistence.NewShipmentStore(db)               // 3rd layer
+	shipmentTracker := business.NewShipmentTracker(shipmentStore)   // 2nd layer
+	trackingHandler := handlers.NewTrackingHandler(shipmentTracker) // 1rd layer
+
+	// gRPC intialization
+	lis, err := net.Listen("tcp", serverAddr)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
-
-	var resp, orderErr = client.CreateOrder(context.Background(), req)
-	if orderErr != nil {
-		log.Printf("fail to create order: %v", err)
-	}
-
-	log.Printf("got the response: %v", resp)
+	var opts []grpc.ServerOption
+	grpcServer := grpc.NewServer(opts...)
+	service_v1.RegisterTrackingServiceServer(grpcServer, trackingHandler)
+	grpcServer.Serve(lis)
 }

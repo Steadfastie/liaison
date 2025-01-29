@@ -6,10 +6,17 @@
 
 Go client generate command (WSL-compatible):
 
-     protoc --proto_path=./proto --go_out=./go/client --go_opt=paths=source_relative \
-     --go-grpc_out=./go/client --go-grpc_opt=paths=source_relative \
+     protoc --proto_path=./proto --go_out=./go/generated/client --go_opt=paths=source_relative \
+     --go-grpc_out=./go/generated/client --go-grpc_opt=paths=source_relative \
      --experimental_allow_proto3_optional \
-     ./proto/order_service.proto ./proto/order_request.proto ./proto/order_response.proto
+     ./proto/order*.proto
+
+     protoc --proto_path=./proto --go_out=./go/generated/service --go_opt=paths=source_relative \
+     --go-grpc_out=./go/generated/service --go-grpc_opt=paths=source_relative \
+     --experimental_allow_proto3_optional \
+     ./proto/tracking*.proto
+
+     https://github.com/grpc/grpc-go/issues/3794
 
 Docker build dotnet
 

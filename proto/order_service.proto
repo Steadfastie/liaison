@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/steadfastie/liaison/go/client;client_v1";
+option go_package = "github.com/steadfastie/liaison/go/generated/client;client_v1";
 
 package liaison.v1; // https://learn.microsoft.com/en-gb/aspnet/core/grpc/versioning?view=aspnetcore-9.0
 

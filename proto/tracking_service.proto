@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "github.com/steadfastie/liaison/go/generated/service;service_v1";
+
+package liaison.v1; // https://learn.microsoft.com/en-gb/aspnet/core/grpc/versioning?view=aspnetcore-9.0
+
+import "google/protobuf/empty.proto";
+import "tracking_list_request.proto";
+import "tracking_list_response.proto";
+import "tracking_place_request.proto";
+
+service TrackingService {
+  rpc List(ListRequest) returns (ListResponse);
+  rpc Place(PlaceRequest) returns (google.protobuf.Empty);
+}

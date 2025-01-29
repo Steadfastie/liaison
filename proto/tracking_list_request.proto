@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "github.com/steadfastie/liaison/go/generated/service;service_v1";
+
+import "google/protobuf/timestamp.proto";
+import "tracking_shipment.proto";
+
+package liaison.v1;
+
+message ListRequest {
+  repeated string shipmentIds = 1;
+  optional ShipmentStatus status = 2;
+  optional google.protobuf.Timestamp from = 3;
+  optional google.protobuf.Timestamp to = 4;
+}
