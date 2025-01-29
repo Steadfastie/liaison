@@ -25,10 +25,18 @@ func NewTrackingHandler(tracker business.Tracker) *TrackingHandler {
 
 func (h *TrackingHandler) List(ctx context.Context, in *service_v1.ListRequest) (*service_v1.ListResponse, error) {
 	status := ToDomainShipmentStatus(in.Status)
-	from := in.From.AsTime() // has default & causes issues
-	to := in.To.AsTime()     // has default & causes issues
+	var from *time.Time
+	var to *time.Time
+	if in.From == nil && in.From.IsValid() {
+		val := in.From.AsTime()
+		from = &val
+	}
+	if in.To == nil && in.To.IsValid() {
+		val := in.To.AsTime()
+		to = &val
+	}
 
-	result, err := h.Tracker.List(ctx, in.ShipmentIds, &status, &from, &to)
+	result, err := h.Tracker.List(ctx, in.ShipmentIds, &status, from, to)
 	if err != nil {
 		return nil, err
 	}

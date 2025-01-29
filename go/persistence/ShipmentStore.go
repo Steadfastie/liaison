@@ -44,11 +44,11 @@ func (store *ShipmentStore) GetMany(
 	filter := bson.M{}
 
 	if len(ids) > 0 {
-		filter["id"] = bson.M{"$in": ids}
+		filter["_id"] = bson.M{"$in": ids}
 	}
 
 	if status != nil {
-		filter["status"] = *status
+		filter["status"] = statusToString(*status)
 	}
 
 	dateFilter := bson.M{}
