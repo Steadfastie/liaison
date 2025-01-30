@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 
@@ -11,27 +12,37 @@ import (
 
 	service_v1 "liaison_go/generated/service"
 
+	"github.com/spf13/viper"
+
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"google.golang.org/grpc"
 )
 
-var (
-	serverAddr = "localhost:5001"
-	mongoAddr  = "mongodb://localhost:27017"
-	database   = "liaison"
-)
-
 const ()
 
 func main() {
+	// Config intialization
+	viper.AutomaticEnv()
+	viper.SetConfigName("config")
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("config file error %w", err))
+	}
+
+	var conf Config
+	err = viper.Unmarshal(&conf)
+	if err != nil {
+		panic(fmt.Errorf("config unmarshalling error %w", err))
+	}
 
 	// MongoDB intialization
 	bsonOpts := &options.BSONOptions{
 		UseJSONStructTags: true,
 	}
 	clientOpts := options.Client().
-		ApplyURI(mongoAddr).
+		ApplyURI(conf.MongoSettings.ConnectionString).
 		SetBSONOptions(bsonOpts)
 	client, err := mongo.Connect(clientOpts)
 	if err != nil {
@@ -42,7 +53,7 @@ func main() {
 			panic(err)
 		}
 	}()
-	db := client.Database(database)
+	db := client.Database(conf.MongoSettings.Database)
 
 	// Services intialization
 	shipmentStore := persistence.NewShipmentStore(db)               // 3rd layer
@@ -50,7 +61,7 @@ func main() {
 	trackingHandler := handlers.NewTrackingHandler(shipmentTracker) // 1rd layer
 
 	// gRPC intialization
-	lis, err := net.Listen("tcp", serverAddr)
+	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", conf.Host.Port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
