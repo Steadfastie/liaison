@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	"go.uber.org/zap"
 )
 
 const (
@@ -17,12 +18,14 @@ const (
 
 type ShipmentStore struct {
 	collection *mongo.Collection
+	logger     *zap.Logger
 }
 
-func NewShipmentStore(db *mongo.Database) *ShipmentStore {
+func NewShipmentStore(db *mongo.Database, logger *zap.Logger) *ShipmentStore {
 	collection := db.Collection(collectioName)
 	return &ShipmentStore{
 		collection: collection,
+		logger:     logger.Named("ShipmentStore"),
 	}
 }
 
@@ -36,14 +39,14 @@ type shipment struct {
 
 func (store *ShipmentStore) GetMany(
 	ctx context.Context,
-	ids []string,
+	ids *[]string,
 	status *domain.ShipmentStatus,
 	from *time.Time,
 	to *time.Time,
 ) ([]domain.Shipment, error) {
 	filter := bson.M{}
 
-	if len(ids) > 0 {
+	if len(*ids) > 0 {
 		filter["_id"] = bson.M{"$in": ids}
 	}
 
@@ -91,10 +94,10 @@ func (store *ShipmentStore) GetMany(
 	return results, nil
 }
 
-func (store *ShipmentStore) Create(ctx context.Context, shipments []domain.Shipment) error {
+func (store *ShipmentStore) Create(ctx context.Context, shipments *[]domain.Shipment) error {
 	// Convert domain to BSON
 	var docs []shipment
-	for _, s := range shipments {
+	for _, s := range *shipments {
 		doc := shipment{
 			ShipmentId:  s.ShipmentId,
 			Status:      statusToString(s.Status),
