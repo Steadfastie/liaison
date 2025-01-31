@@ -3,7 +3,7 @@ services:
     build:
       context: ../
       dockerfile: ./build/dotnet.dockerfile
-    image: dotnet-image
+    image: liaison-dotnet
     container_name: dotnet
     healthcheck:
       test: ["CMD", "bin/grpc_health_probe-linux-amd64", "-addr=localhost:5002"]
@@ -15,6 +15,21 @@ services:
     environment:
       - MongoSettings__ConnectionString=mongodb://mongo:27017/
       - MongoSettings__Database=liaison-tests
+    depends_on:
+      - mongo
+
+  go:
+    build:
+      context: ../
+      dockerfile: ./build/go.dockerfile
+    image: liaison-go
+    container_name: go
+    ports:
+      - "5001:8080"
+    environment:
+      - LIAISON_MONGOSETTINGS_CONNECTIONSTRING=mongodb://mongo:27017/
+      - LIAISON_MONGOSETTINGS_DATABASE=liaison-tests
+      - LIAISON_HOST_PORT=8080
     depends_on:
       - mongo
 

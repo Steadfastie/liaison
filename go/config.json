@@ -1,9 +1,9 @@
 {
   "MongoSettings": {
-    "connectionString": "mongodb://localhost:27017/",
-    "database": "liaison"
+    "ConnectionString": "mongodb://localhost:27017/",
+    "Database": "liaison"
   },
   "Host": {
-    "port": 5001
+    "Port": "5001"
   }
 }

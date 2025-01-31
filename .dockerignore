@@ -6,3 +6,4 @@
 # files
 Dockerfile*
 **/*.md
+*_test.go
