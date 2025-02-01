@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	collectioName = "shipments"
+	CollectioName = "shipments"
 )
 
 type ShipmentStore struct {
@@ -22,14 +22,14 @@ type ShipmentStore struct {
 }
 
 func NewShipmentStore(db *mongo.Database, logger *zap.Logger) *ShipmentStore {
-	collection := db.Collection(collectioName)
+	collection := db.Collection(CollectioName)
 	return &ShipmentStore{
 		collection: collection,
 		logger:     logger.Named("ShipmentStore"),
 	}
 }
 
-type shipment struct {
+type Shipment struct {
 	ShipmentId  string    `bson:"_id"`
 	Status      string    `bson:"status"`
 	LastUpdated time.Time `bson:"lastUpdated"`
@@ -51,7 +51,7 @@ func (store *ShipmentStore) GetMany(
 	}
 
 	if status != nil {
-		filter["status"] = statusToString(*status)
+		filter["status"] = StatusToString(*status)
 	}
 
 	dateFilter := bson.M{}
@@ -74,7 +74,7 @@ func (store *ShipmentStore) GetMany(
 	}
 	defer cursor.Close(ctx)
 
-	var docs []shipment
+	var docs []Shipment
 	if err = cursor.All(ctx, &docs); err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func (store *ShipmentStore) GetMany(
 	for _, doc := range docs {
 		shipment := domain.Shipment{
 			ShipmentId:  doc.ShipmentId,
-			Status:      stringToStatus(doc.Status),
+			Status:      StringToStatus(doc.Status),
 			LastUpdated: doc.LastUpdated,
 			Location:    doc.Location,
 			ValidUntil:  doc.ValidUntil,
@@ -96,11 +96,11 @@ func (store *ShipmentStore) GetMany(
 
 func (store *ShipmentStore) Create(ctx context.Context, shipments *[]domain.Shipment) error {
 	// Convert domain to BSON
-	var docs []shipment
+	var docs []Shipment
 	for _, s := range *shipments {
-		doc := shipment{
+		doc := Shipment{
 			ShipmentId:  s.ShipmentId,
-			Status:      statusToString(s.Status),
+			Status:      StatusToString(s.Status),
 			LastUpdated: s.LastUpdated,
 			Location:    s.Location,
 			ValidUntil:  s.ValidUntil,
@@ -111,7 +111,7 @@ func (store *ShipmentStore) Create(ctx context.Context, shipments *[]domain.Ship
 	return err
 }
 
-func statusToString(s domain.ShipmentStatus) string {
+func StatusToString(s domain.ShipmentStatus) string {
 	switch s {
 	case domain.Pending:
 		return "Pending"
@@ -126,7 +126,7 @@ func statusToString(s domain.ShipmentStatus) string {
 	}
 }
 
-func stringToStatus(status string) domain.ShipmentStatus {
+func StringToStatus(status string) domain.ShipmentStatus {
 	switch status {
 	case "Pending":
 		return domain.Pending

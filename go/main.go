@@ -1,34 +1,24 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"net"
-	"os"
-	"strings"
 	"time"
 
 	"liaison_go/business"
 	"liaison_go/handlers"
+	infra "liaison_go/infrastructure"
 	"liaison_go/persistence"
 
 	service_v1 "liaison_go/generated/service"
-
-	"github.com/spf13/viper"
 
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-)
-
-const (
-	prefix = "LIAISON"
 )
 
 var (
@@ -46,57 +36,12 @@ func main() {
 	defer logger.Sync()
 
 	// Config intialization
-	logger.Info("Reading configuration")
-	viper.SetEnvPrefix(prefix)
-	viper.AutomaticEnv()
-
-	// inspired by https://github.com/spf13/viper/issues/761#issuecomment-1578931559
-	for _, e := range os.Environ() {
-		split := strings.Split(e, "=")
-		k := split[0]
-		if strings.HasPrefix(k, prefix) {
-			name := strings.Join(strings.Split(k, "_")[1:], ".")
-			// Explicit Set has the highest priority
-			viper.Set(name, split[1])
-		}
-	}
-
-	viper.SetConfigName("config")
-	viper.AddConfigPath(".")
-	err := viper.ReadInConfig()
-	if err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			logger.Warn("Config file not found, using environment variables")
-		} else {
-			panic(fmt.Errorf("config file error %w", err))
-		}
-	}
-
-	var conf Config
-	err = viper.Unmarshal(&conf)
-	if err != nil {
-		panic(fmt.Errorf("config unmarshalling error %w", err))
-	}
-	logger.Info("Configuration read", zap.Any("config", conf))
+	var conf infra.Config
+	conf.Populate(logger)
 
 	// MongoDB intialization
-	logger.Info("Setting up Mongo")
-	bsonOpts := &options.BSONOptions{
-		UseJSONStructTags: true,
-	}
-	clientOpts := options.Client().
-		ApplyURI(conf.MongoSettings.ConnectionString).
-		SetBSONOptions(bsonOpts)
-	client, err := mongo.Connect(clientOpts)
-	if err != nil {
-		panic(fmt.Errorf("mongo client connection error %w", err))
-	}
-	defer func() {
-		if err := client.Disconnect(context.Background()); err != nil {
-			panic(fmt.Errorf("mongo client disconnection error %w", err))
-		}
-	}()
-	db := client.Database(conf.MongoSettings.Database)
+	db, disconnect := infra.InitialiseMongoDB(logger, &conf)
+	defer disconnect()
 
 	// Services intialization
 	logger.Info("Initializing services")
