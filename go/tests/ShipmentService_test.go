@@ -100,4 +100,45 @@ func TestShipmentService(t *testing.T) {
 		require.Equal(t, req.Shipments[1].Location, dbData[1].Location)
 		require.WithinDuration(t, now.Add(24*time.Hour), dbData[1].ValidUntil, time.Millisecond)
 	})
+
+	t.Run("List_shipments_by_ids", func(t *testing.T) {
+		// Arrange
+		dbFixture.ClearAll()
+		now := time.Now().UTC()
+
+		createReq := &service_v1.PlaceRequest{
+			ValidUntil: timestamppb.New(now.Add(24 * time.Hour)),
+			Shipments: []*service_v1.Shipment{
+				{
+					ShipmentId:  uuid.New().String(),
+					Status:      service_v1.ShipmentStatus_SHIPMENT_STATUS_REGISTERED,
+					LastUpdated: timestamppb.New(now),
+					Location:    "Bangladesh",
+				},
+				{
+					ShipmentId:  uuid.New().String(),
+					Status:      service_v1.ShipmentStatus_SHIPMENT_STATUS_SHIPPED,
+					LastUpdated: timestamppb.New(now),
+					Location:    "China",
+				},
+			},
+		}
+		client.Place(context.Background(), createReq)
+
+		req := &service_v1.ListRequest{
+			ShipmentIds: []string{createReq.Shipments[0].ShipmentId, createReq.Shipments[1].ShipmentId},
+		}
+
+		// Act
+		res, err := client.List(context.Background(), req)
+
+		// Assert
+		require.NoError(t, err)
+
+		require.Len(t, res.Shipments, 2)
+		idList := []string{createReq.Shipments[0].ShipmentId, createReq.Shipments[1].ShipmentId}
+		require.Contains(t, idList, res.Shipments[0].ShipmentId)
+		require.Contains(t, idList, res.Shipments[1].ShipmentId)
+		require.WithinDuration(t, res.ValidUntil.AsTime(), createReq.ValidUntil.AsTime(), time.Millisecond)
+	})
 }

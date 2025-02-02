@@ -17,16 +17,25 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
-	customFunc grpc_zap.CodeToLevel = func(code codes.Code) zapcore.Level {
+	logLevelsFunc grpc_zap.CodeToLevel = func(code codes.Code) zapcore.Level {
 		if code == codes.OK {
 			return zapcore.InfoLevel
 		}
 		return zapcore.ErrorLevel
+	}
+	recoveryFunc = func(logger *zap.Logger) recovery.RecoveryHandlerFunc {
+		return func(p interface{}) (err error) {
+			logger.DPanic("Something went wrong", zap.Any("panic", p))
+			return status.Errorf(codes.Internal, "Something went wrong")
+		}
 	}
 )
 
@@ -52,13 +61,18 @@ func main() {
 	// gRPC intialization
 	logger.Info("Starting gRPC server")
 
-	opts := []grpc_zap.Option{
-		grpc_zap.WithLevels(customFunc),
+	zapOpts := []grpc_zap.Option{
+		grpc_zap.WithLevels(logLevelsFunc),
 		grpc_zap.WithDurationField(func(duration time.Duration) zapcore.Field {
 			return zap.Int64("grpc.time_ns", duration.Nanoseconds())
 		}),
 	}
 	grpc_zap.ReplaceGrpcLoggerV2(logger)
+
+	recoveryOpts := []recovery.Option{
+		recovery.WithRecoveryHandler(recoveryFunc(logger)),
+	}
+
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", conf.Host.Port))
 	if err != nil {
 		logger.Fatal("failed to listen: %v", zap.Error(err))
@@ -66,11 +80,13 @@ func main() {
 	opt := []grpc.ServerOption{
 		grpc.ChainUnaryInterceptor(
 			grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
-			grpc_zap.UnaryServerInterceptor(logger, opts...),
+			grpc_zap.UnaryServerInterceptor(logger, zapOpts...),
+			recovery.UnaryServerInterceptor(recoveryOpts...),
 		),
 	}
 	grpcServer := grpc.NewServer(opt...)
 	service_v1.RegisterTrackingServiceServer(grpcServer, trackingHandler)
 	grpcServer.Serve(lis)
+
 	logger.Info("Finished serving")
 }
