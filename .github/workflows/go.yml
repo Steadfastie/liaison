@@ -27,7 +27,7 @@ jobs:
 
     - name: Test
       working-directory: ./go
-      run: go test -v $(go list ./... | grep -v '^./tests')
+      run: go test -v $(go list ./... | grep -v '/tests$')
 
   integration_tests:
     name: Run Integration Tests
