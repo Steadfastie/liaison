@@ -5,11 +5,6 @@ services:
       dockerfile: ./build/dotnet.dockerfile
     image: liaison-dotnet
     container_name: dotnet
-    healthcheck:
-      test: ["CMD", "bin/grpc_health_probe-linux-amd64", "-addr=localhost:5002"]
-      interval: 30s
-      timeout: 30s
-      retries: 3
     ports:
       - "5002:8080"
     environment:

@@ -19,6 +19,9 @@ import (
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 
+	"google.golang.org/grpc/health"
+	healthgrpc "google.golang.org/grpc/health/grpc_health_v1"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -37,6 +40,10 @@ var (
 			return status.Errorf(codes.Internal, "Something went wrong")
 		}
 	}
+)
+
+const (
+	systemName = "liaison" // represents the health of the system
 )
 
 func main() {
@@ -86,6 +93,11 @@ func main() {
 	}
 	grpcServer := grpc.NewServer(opt...)
 	service_v1.RegisterTrackingServiceServer(grpcServer, trackingHandler)
+
+	healthcheck := health.NewServer()
+	healthgrpc.RegisterHealthServer(grpcServer, healthcheck)
+	go infra.MonitorMongo(db.Client(), healthcheck, logger, systemName)
+
 	grpcServer.Serve(lis)
 
 	logger.Info("Finished serving")

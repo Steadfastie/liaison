@@ -11,7 +11,7 @@ public static class Extensions
 {
     public static void AddPersistence(this IServiceCollection services, MongoSettings settings)
     {
-        services.AddSingleton<IMongoDatabase>(provider =>
+        services.AddSingleton(provider =>
         {
             var client = new MongoClient(settings.ConnectionString);
             return client.GetDatabase(settings.Database);
