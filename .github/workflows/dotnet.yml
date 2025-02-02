@@ -39,7 +39,7 @@ jobs:
       with:
         dotnet-version: 9.0.x
     - name: Build Docker Images and Start Services
-      run: docker compose -f ./build/docker-compose.yaml up -d --build
+      run: docker compose -f ./build/docker-compose.yaml up -d --build dotnet mongo
     - name: Run Integration Tests
       run: dotnet test dotnet/tests/integration.tests/integration.tests.csproj
     - name: Tear Down Docker Containers

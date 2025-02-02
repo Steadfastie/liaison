@@ -2,7 +2,9 @@
 **/bin/
 **/obj/
 **/out/
+**/tests/
 
 # files
 Dockerfile*
 **/*.md
+*_test.go

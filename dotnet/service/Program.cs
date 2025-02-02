@@ -3,6 +3,7 @@ using infrastructure;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 using Serilog.Formatting.Compact;
+using service;
 using service.Services;
 
 Log.Logger = new LoggerConfiguration()
@@ -27,8 +28,9 @@ try
         cfg.RegisterServicesFromAssembly(typeof(CreateOrderHandler).Assembly);
     });
 
+    builder.Services.AddSingleton<IHealthCheck, MongoHealthCheck>();
     builder.Services.AddGrpcHealthChecks()
-           .AddCheck(string.Empty, () => HealthCheckResult.Healthy());
+         .AddCheck<MongoHealthCheck>(string.Empty);
 
     var app = builder.Build();
 

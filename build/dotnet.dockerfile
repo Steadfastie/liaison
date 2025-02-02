@@ -1,9 +1,6 @@
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 ARG TARGETARCH
 
-RUN curl -Lo /usr/local/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.37/grpc_health_probe-linux-amd64 && \
-    chmod +x /usr/local/bin/grpc_health_probe
-
 RUN apk add --no-cache grpc-plugins
 ENV PROTOBUF_PROTOC=/usr/bin/protoc \
     GRPC_PROTOC_PLUGIN=/usr/bin/grpc_csharp_plugin

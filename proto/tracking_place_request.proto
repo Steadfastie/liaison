@@ -9,5 +9,5 @@ package liaison.v1;
 
 message PlaceRequest {
   repeated Shipment shipments = 1;
-  google.protobuf.Timestamp validUntill = 2;
+  google.protobuf.Timestamp validUntil = 2;
 }

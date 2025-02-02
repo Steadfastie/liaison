@@ -9,24 +9,27 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	"go.uber.org/zap"
 )
 
 const (
-	collectioName = "shipments"
+	CollectioName = "shipments"
 )
 
 type ShipmentStore struct {
 	collection *mongo.Collection
+	logger     *zap.Logger
 }
 
-func NewShipmentStore(db *mongo.Database) *ShipmentStore {
-	collection := db.Collection(collectioName)
+func NewShipmentStore(db *mongo.Database, logger *zap.Logger) *ShipmentStore {
+	collection := db.Collection(CollectioName)
 	return &ShipmentStore{
 		collection: collection,
+		logger:     logger.Named("ShipmentStore"),
 	}
 }
 
-type shipment struct {
+type Shipment struct {
 	ShipmentId  string    `bson:"_id"`
 	Status      string    `bson:"status"`
 	LastUpdated time.Time `bson:"lastUpdated"`
@@ -36,19 +39,19 @@ type shipment struct {
 
 func (store *ShipmentStore) GetMany(
 	ctx context.Context,
-	ids []string,
+	ids *[]string,
 	status *domain.ShipmentStatus,
 	from *time.Time,
 	to *time.Time,
 ) ([]domain.Shipment, error) {
 	filter := bson.M{}
 
-	if len(ids) > 0 {
+	if len(*ids) > 0 {
 		filter["_id"] = bson.M{"$in": ids}
 	}
 
 	if status != nil {
-		filter["status"] = statusToString(*status)
+		filter["status"] = StatusToString(*status)
 	}
 
 	dateFilter := bson.M{}
@@ -71,7 +74,7 @@ func (store *ShipmentStore) GetMany(
 	}
 	defer cursor.Close(ctx)
 
-	var docs []shipment
+	var docs []Shipment
 	if err = cursor.All(ctx, &docs); err != nil {
 		return nil, err
 	}
@@ -80,7 +83,7 @@ func (store *ShipmentStore) GetMany(
 	for _, doc := range docs {
 		shipment := domain.Shipment{
 			ShipmentId:  doc.ShipmentId,
-			Status:      stringToStatus(doc.Status),
+			Status:      StringToStatus(doc.Status),
 			LastUpdated: doc.LastUpdated,
 			Location:    doc.Location,
 			ValidUntil:  doc.ValidUntil,
@@ -91,13 +94,13 @@ func (store *ShipmentStore) GetMany(
 	return results, nil
 }
 
-func (store *ShipmentStore) Create(ctx context.Context, shipments []domain.Shipment) error {
+func (store *ShipmentStore) Create(ctx context.Context, shipments *[]domain.Shipment) error {
 	// Convert domain to BSON
-	var docs []shipment
-	for _, s := range shipments {
-		doc := shipment{
+	var docs []Shipment
+	for _, s := range *shipments {
+		doc := Shipment{
 			ShipmentId:  s.ShipmentId,
-			Status:      statusToString(s.Status),
+			Status:      StatusToString(s.Status),
 			LastUpdated: s.LastUpdated,
 			Location:    s.Location,
 			ValidUntil:  s.ValidUntil,
@@ -108,7 +111,7 @@ func (store *ShipmentStore) Create(ctx context.Context, shipments []domain.Shipm
 	return err
 }
 
-func statusToString(s domain.ShipmentStatus) string {
+func StatusToString(s domain.ShipmentStatus) string {
 	switch s {
 	case domain.Pending:
 		return "Pending"
@@ -123,7 +126,7 @@ func statusToString(s domain.ShipmentStatus) string {
 	}
 }
 
-func stringToStatus(status string) domain.ShipmentStatus {
+func StringToStatus(status string) domain.ShipmentStatus {
 	switch status {
 	case "Pending":
 		return domain.Pending

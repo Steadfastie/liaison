@@ -5,9 +5,11 @@ import (
 	"time"
 
 	"liaison_go/business"
+	"liaison_go/domain"
 
 	service_v1 "liaison_go/generated/service"
 
+	"go.uber.org/zap"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -15,18 +17,24 @@ import (
 type TrackingHandler struct {
 	service_v1.UnimplementedTrackingServiceServer
 	business.Tracker
+	*zap.Logger
 }
 
-func NewTrackingHandler(tracker business.Tracker) *TrackingHandler {
+func NewTrackingHandler(tracker business.Tracker, logger *zap.Logger) *TrackingHandler {
 	return &TrackingHandler{
 		Tracker: tracker,
+		Logger:  logger.Named("TrackingHandler"),
 	}
 }
 
 func (h *TrackingHandler) List(ctx context.Context, in *service_v1.ListRequest) (*service_v1.ListResponse, error) {
-	status := ToDomainShipmentStatus(in.Status)
+	var status *domain.ShipmentStatus
 	var from *time.Time
 	var to *time.Time
+	if in.Status != nil {
+		val := ToDomainShipmentStatus(in.Status)
+		status = &val
+	}
 	if in.From == nil && in.From.IsValid() {
 		val := in.From.AsTime()
 		from = &val
@@ -36,7 +44,7 @@ func (h *TrackingHandler) List(ctx context.Context, in *service_v1.ListRequest) 
 		to = &val
 	}
 
-	result, err := h.Tracker.List(ctx, in.ShipmentIds, &status, from, to)
+	result, err := h.Tracker.List(ctx, &in.ShipmentIds, status, from, to)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +68,12 @@ func (h *TrackingHandler) List(ctx context.Context, in *service_v1.ListRequest) 
 
 func (h *TrackingHandler) Place(ctx context.Context, in *service_v1.PlaceRequest) (*emptypb.Empty, error) {
 	shipments := ToDomainShipments(in.Shipments)
-	err := h.Tracker.Place(ctx, shipments, in.ValidUntill.AsTime())
+	var validUntil *time.Time
+	if in.ValidUntil != nil && in.ValidUntil.IsValid() {
+		val := in.ValidUntil.AsTime()
+		validUntil = &val
+	}
+	err := h.Tracker.Place(ctx, &shipments, validUntil)
 	if err != nil {
 		return nil, err
 	}
